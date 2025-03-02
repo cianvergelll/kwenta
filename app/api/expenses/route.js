@@ -13,6 +13,7 @@ export async function GET(req) {
   try {
     const [expenses] = await db.query("SELECT * FROM expenses WHERE user_id = ?", [session.user.id]);
     return NextResponse.json(expenses);
+
   } catch (error) {
     return NextResponse.json({ error: "Database Error", message: error.message }, { status: 500 });
   }

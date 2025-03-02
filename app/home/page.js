@@ -34,7 +34,25 @@ export default function Home() {
     setExpenses(updatedExpenses); // Update the expenses state
   };
 
-  if (status === "loading") return <p className="p-6 text-blue-500">Loading...</p>;
+  const getCategoryColor = (category) => {
+    switch (category) {
+      case "Food":
+        return "bg-blue-800";
+      case "School":
+        return "bg-red-800";
+      case "Shopping":
+        return "bg-gradient-to-r from-yellow-600 to-green-700";
+      case "Transportation":
+        return "bg-green-800";
+      case "Utilities":
+        return "bg-purple-800";
+      default:
+        return "bg-gray-600"; // Default color
+    }
+  };
+
+  if (status === "loading")
+    return <p className="p-6 text-blue-500">Loading...</p>;
   if (!session) return null;
 
   return (
@@ -61,8 +79,30 @@ export default function Home() {
         </div>
 
         {/* Today's History */}
-        <div className="w-full h-5/6 border border-red-400">
-          
+        <div className="w-full h-5/6 border border-red-400 flex flex-col">
+          <div className="w-full h-1/4 border border-red-400"></div>
+
+          {/* Display Board */}
+          <div className="w-full h-3/4 border border-gray-300 rounded-lg p-4 overflow-y-auto">
+            {expenses.length > 0 ? (
+              expenses.map((expense) => (
+                <div
+                  key={expense.id}
+                  className={`p-4 text-white rounded-lg mb-3 ${getCategoryColor(expense.category)}`}
+                >
+                  <div className="flex justify-between">
+                    <span className="font-bold">{expense.category}</span>
+                    <span className="font-bold">
+                      ₱{Number(expense.amount).toFixed(2)}
+                    </span>
+                  </div>
+                  <p className="text-sm mt-1">Note: {expense.expense_note}</p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center">No expenses recorded.</p>
+            )}
+          </div>
         </div>
       </div>
 
