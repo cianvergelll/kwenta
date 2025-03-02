@@ -23,7 +23,7 @@ export default function LoginPage() {
     if (result?.error) {
       setError(result.error);
     } else {
-      router.push("/dashboard");
+      router.push("/expenses");
     }
   };
 
