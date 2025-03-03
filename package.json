@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "bcryptjs": "^3.0.0",
+    "lucide-react": "^0.477.0",
     "mysql2": "^3.12.0",
     "next": "15.1.7",
     "next-auth": "^4.24.11",
