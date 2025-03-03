@@ -11,7 +11,7 @@ export default function Payments() {
     };
 
     const handleNextSet = () => {
-        setDaySet((prev) => prev + 1); // Adjust based on your max daySet logic
+        setDaySet((prev) => prev + 1);
     };
 
     return (
