@@ -243,20 +243,22 @@ export default function Payments() {
           {/* Payment History */}
           <div className="h-full w-1/2 border border-red-500">
             {payments.length > 0 ? (
-              payments.map((payment) => (
-                <div
-                  key={payment.id}
-                  className="flex justify-between items-center p-3 mb-3 bg-green-700 text-white rounded-lg"
-                >
-                  {/* Note on the left */}
-                  <span className="text-sm">{payment.payments_note}</span>
+              payments
+                .sort((a, b) => b.amount - a.amount) // Sort from highest to lowest
+                .map((payment) => (
+                  <div
+                    key={payment.id}
+                    className="flex justify-between items-center p-3 mb-3 bg-green-700 text-white rounded-lg"
+                  >
+                    {/* Note on the left */}
+                    <span className="text-sm">{payment.payments_note}</span>
 
-                  {/* Amount on the right */}
-                  <span className="font-bold">
-                    ₱{Number(payment.amount).toFixed(2)}
-                  </span>
-                </div>
-              ))
+                    {/* Amount on the right */}
+                    <span className="font-bold">
+                      ₱{Number(payment.amount).toFixed(2)}
+                    </span>
+                  </div>
+                ))
             ) : (
               <p className="text-gray-500 text-center">
                 No payment history available.
