@@ -9,7 +9,7 @@ export default function Payments() {
             <div className="h-full w-4/5 border border-red-500">
 
                 {/* Calendar */}
-                <div className="w-full h-1/4 border border-red-500 my-6"></div>
+                <div className="w-full h-1/4 bg-green-900 my-6 rounded-2xl"></div>
 
                 {/* Payment Details & Payment History */}
                 <div className="w-full h-2/3 border border-green-500 mt-3 flex flex-row">
