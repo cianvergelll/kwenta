@@ -127,7 +127,15 @@ export default function Payments() {
         {/* Payment Details & Payment History */}
         <div className="w-full h-2/3 border border-green-500 mt-3 flex flex-row">
           {/* Payment Details */}
-          <div className="h-full w-1/2 border border-red-500 relative overflow-y-auto">
+          <div className="h-full w-1/2 border border-red-500 overflow-y-auto relative">
+            {/* Sticky Plus Icon Button */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="sticky top-4 right-4 w-12 h-12 bg-green-900 rounded-full flex items-center justify-center shadow-md hover:bg-green-700 transition z-50 ml-auto"
+            >
+              <PlusIcon className="w-6 h-6 text-green-500 hover:text-white" />
+            </button>
+
             {payments.length > 0 ? (
               payments.map((payment) => {
                 // Convert date to "March 03, 2025" format
@@ -231,13 +239,6 @@ export default function Payments() {
             ) : (
               <p className="text-gray-500 text-center">No payments recorded.</p>
             )}
-            {/* Button */}
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-12 h-12 bg-green-900 rounded-full flex items-center justify-center shadow-md hover:bg-green-700 transition absolute top-4 right-4 z-50"
-            >
-              <PlusIcon className="w-6 h-6 text-green-500 hover:text-white" />
-            </button>
           </div>
 
           {/* Payment History */}
