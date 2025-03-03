@@ -93,12 +93,17 @@ export default function Home() {
   };
 
   const handleEdit = (expense) => {
-    setEditingExpense(expense.id); // Set the expense being edited
+    const date = new Date(expense.current_date);
+  
+    // Get the local date in YYYY-MM-DD format
+    const localDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  
+    setEditingExpense(expense.id);
     setUpdatedData({
       amount: expense.amount,
       category: expense.category,
       expense_note: expense.expense_note,
-      current_date: expense.current_date,
+      current_date: localDate, // Now correctly preserves local date
     });
   };
 
@@ -112,8 +117,8 @@ export default function Home() {
     if (response.ok) {
       setExpenses(
         expenses.map((expense) =>
-          expense.id === id ? { ...expense, ...updatedData } : expense
-        )
+          expense.id === id ? { ...expense, ...updatedData } : expense,
+        ),
       );
       setEditingExpense(null); // Reset editing state
     } else {
@@ -155,36 +160,104 @@ export default function Home() {
           {/* Display Board */}
           <div className="w-full h-3/4 border border-gray-300 rounded-lg p-4 overflow-y-auto">
             {expenses.length > 0 ? (
-              expenses.map((expense) => (
-                <div
-                  key={expense.id}
-                  className={`p-4 text-white rounded-lg mb-3 ${getCategoryColor(expense.category)}`}
-                >
-                  <div className="flex justify-between">
-                    <span className="font-bold">{expense.category}</span>
-                    <span className="font-bold">
-                      ₱{Number(expense.amount).toFixed(2)}
-                    </span>
+              expenses.map((expense) => {
+                // Convert date to "March 03, 2025" format
+                const formattedDate = new Date(
+                  expense.current_date,
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "2-digit",
+                });
+
+                return (
+                  <div
+                    key={expense.id}
+                    className={`p-4 text-white rounded-lg mb-3 ${getCategoryColor(expense.category)}`}
+                  >
+                    {editingExpense === expense.id ? (
+                      // Editable Inputs
+                      <div>
+                        <input
+                          type="number"
+                          value={updatedData.amount}
+                          onChange={(e) =>
+                            setUpdatedData({
+                              ...updatedData,
+                              amount: e.target.value,
+                            })
+                          }
+                          className="w-full p-1 text-black rounded"
+                        />
+                        <input
+                          type="text"
+                          value={updatedData.expense_note}
+                          onChange={(e) =>
+                            setUpdatedData({
+                              ...updatedData,
+                              expense_note: e.target.value,
+                            })
+                          }
+                          className="w-full p-1 mt-1 text-black rounded"
+                        />
+                        <input
+                          type="date"
+                          value={updatedData.current_date}
+                          onChange={(e) =>
+                            setUpdatedData({
+                              ...updatedData,
+                              current_date: e.target.value,
+                            })
+                          }
+                          className="w-full p-1 mt-1 text-black rounded"
+                        />
+                        <div className="flex justify-end space-x-2 mt-2">
+                          <button
+                            onClick={() => handleUpdate(expense.id)}
+                            className="p-1 bg-blue-500 text-white rounded"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingExpense(null)}
+                            className="p-1 bg-gray-500 text-white rounded"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      // Normal Display
+                      <>
+                        <div className="flex justify-between">
+                          <span className="font-bold">{expense.category}</span>
+                          <span className="font-bold">
+                            ₱{Number(expense.amount).toFixed(2)}
+                          </span>
+                        </div>
+                        <p className="text-sm mt-1">
+                          Note: {expense.expense_note}
+                        </p>
+                        <p className="text-sm mt-1">Date: {formattedDate}</p>
+                        <div className="flex justify-end space-x-2 mt-2">
+                          <button
+                            onClick={() => handleEdit(expense)}
+                            className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
+                          >
+                            <PencilIcon className="w-4 h-4 text-blue-500" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(expense.id)}
+                            className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
+                          >
+                            <TrashIcon className="w-4 h-4 text-red-500" />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <p className="text-sm mt-1">Note: {expense.expense_note}</p>
-                  <div className="flex justify-end space-x-2 mt-2">
-                    {/* Edit Button */}
-                    <button
-                      onClick={() => handleEdit(expense)}
-                      className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
-                    >
-                      <PencilIcon className="w-4 h-4 text-blue-500" />
-                    </button>
-                    {/* Delete Button */}
-                    <button
-                      onClick={() => handleDelete(expense.id)}
-                      className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
-                    >
-                      <TrashIcon className="w-4 h-4 text-red-500" />
-                    </button>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-gray-500 text-center">No expenses recorded.</p>
             )}
