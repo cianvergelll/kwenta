@@ -7,6 +7,7 @@ const Calendar = ({ onPrev, onNext }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [daySet, setDaySet] = useState(0);
   const { data: session, status } = useSession();
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const month = currentDate
     .toLocaleString("default", { month: "long" })
