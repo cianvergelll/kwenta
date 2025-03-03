@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import ExpensePopModal from "@/components/ExpensePopModal";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +11,8 @@ export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [expenses, setExpenses] = useState([]);
+  const [editingExpense, setEditingExpense] = useState(null); // Track the expense being edited
+  const [updatedData, setUpdatedData] = useState({}); // Store updated data for editing
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -48,6 +50,74 @@ export default function Home() {
         return "bg-purple-800";
       default:
         return "bg-gray-600"; // Default color
+    }
+  };
+
+  const calculateCategoryTotals = () => {
+    const totals = {};
+
+    expenses.forEach((expense) => {
+      if (totals[expense.category]) {
+        totals[expense.category] += Number(expense.amount);
+      } else {
+        totals[expense.category] = Number(expense.amount);
+      }
+    });
+
+    return totals;
+  };
+
+  const getSortedCategoryTotals = () => {
+    const totals = calculateCategoryTotals();
+
+    const sortedTotals = Object.keys(totals).map((category) => ({
+      category,
+      total: totals[category],
+    }));
+
+    sortedTotals.sort((a, b) => b.total - a.total);
+
+    return sortedTotals;
+  };
+
+  const handleDelete = async (id) => {
+    const response = await fetch(`/api/expenses/${id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setExpenses(expenses.filter((expense) => expense.id !== id)); // Remove the deleted expense
+    } else {
+      console.log("Error deleting expense");
+    }
+  };
+
+  const handleEdit = (expense) => {
+    setEditingExpense(expense.id); // Set the expense being edited
+    setUpdatedData({
+      amount: expense.amount,
+      category: expense.category,
+      expense_note: expense.expense_note,
+      current_date: expense.current_date,
+    });
+  };
+
+  const handleUpdate = async (id) => {
+    const response = await fetch(`/api/expenses/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+      setExpenses(
+        expenses.map((expense) =>
+          expense.id === id ? { ...expense, ...updatedData } : expense
+        )
+      );
+      setEditingExpense(null); // Reset editing state
+    } else {
+      console.log("Error updating expense");
     }
   };
 
@@ -97,6 +167,22 @@ export default function Home() {
                     </span>
                   </div>
                   <p className="text-sm mt-1">Note: {expense.expense_note}</p>
+                  <div className="flex justify-end space-x-2 mt-2">
+                    {/* Edit Button */}
+                    <button
+                      onClick={() => handleEdit(expense)}
+                      className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
+                    >
+                      <PencilIcon className="w-4 h-4 text-blue-500" />
+                    </button>
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDelete(expense.id)}
+                      className="p-1 bg-white rounded-full hover:bg-gray-200 transition"
+                    >
+                      <TrashIcon className="w-4 h-4 text-red-500" />
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -112,7 +198,22 @@ export default function Home() {
         <div className="w-full h-1/2 border border-red-400 mt-6 mb-10"></div>
 
         {/* Expense Summary */}
-        <div className="w-full h-2/5 border border-red-400"></div>
+        <div className="w-full h-2/5 border border-red-400 p-4">
+          <h3 className="text-lg font-semibold mb-4">Expense Summary</h3>
+          <div className="space-y-3">
+            {getSortedCategoryTotals().map(({ category, total }) => (
+              <div
+                key={category}
+                className={`p-3 text-white rounded-lg ${getCategoryColor(category)}`}
+              >
+                <div className="flex justify-between">
+                  <span className="font-bold">{category}</span>
+                  <span className="font-bold">₱{total.toFixed(2)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Modal */}
