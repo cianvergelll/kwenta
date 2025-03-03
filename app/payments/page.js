@@ -12,7 +12,14 @@ export default function Payments() {
                 <div className="w-full h-1/4 border border-red-500 my-6"></div>
 
                 {/* Payment Details & Payment History */}
-                <div className="w-full h-2/3 border border-green-500 mt-3"></div>
+                <div className="w-full h-2/3 border border-green-500 mt-3 flex flex-row">
+
+                    {/* Payment Details */}
+                    <div className="h-full w-1/2 border border-red-500"></div>
+
+                    {/* Payment History */}
+                    <div className="h-full w-1/2 border border-red-500"></div>
+                </div>
             </div>
 
 
