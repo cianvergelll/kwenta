@@ -111,10 +111,6 @@ const Calendar = ({ onPrev, onNext }) => {
         </div>
       </div>
 
-      <div className="text-white live-date text-xl font-semibold mb-4">
-        <p>Today: {currentDate.toDateString()}</p>
-      </div>
-
       <div className="grid grid-cols-7 gap-2">
         {daySets[daySet]?.map((day) => (
           <button
