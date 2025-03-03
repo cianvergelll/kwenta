@@ -127,7 +127,7 @@ export default function Payments() {
         {/* Payment Details & Payment History */}
         <div className="w-full h-2/3 border border-green-500 mt-3 flex flex-row">
           {/* Payment Details */}
-          <div className="h-full w-1/2 border border-red-500 relative">
+          <div className="h-full w-1/2 border border-red-500 relative overflow-y-auto">
             {payments.length > 0 ? (
               payments.map((payment) => {
                 // Convert date to "March 03, 2025" format
@@ -234,7 +234,7 @@ export default function Payments() {
             {/* Button */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="w-12 h-12 bg-green-900 rounded-full flex items-center justify-center shadow-md hover:bg-green-700 transition absolute bottom-4 right-4"
+              className="w-12 h-12 bg-green-900 rounded-full flex items-center justify-center shadow-md hover:bg-green-700 transition absolute top-4 right-4 z-50"
             >
               <PlusIcon className="w-6 h-6 text-green-500 hover:text-white" />
             </button>
